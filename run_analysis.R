@@ -49,5 +49,5 @@ tidy <- all[, good]
 # each subject.
 res <- ddply(tidy, .(subject, activity), function(x) colMeans(x[, 3:81]))
 
-# Write table to a .txt file
+# Writes table to a .txt file
 write.table(res, "Results.txt", row.name=FALSE)
