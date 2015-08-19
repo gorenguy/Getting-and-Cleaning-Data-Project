@@ -45,21 +45,9 @@ names(all) <- c("subject", "activity", vars)
 good <- grepl("mean|std|activity|subject", names(all))
 tidy <- all[, good]
 
-# **End of step 4**
+# Creates a second, independent tidy data set with the average of each variable for each activity and 
+# each subject.
+res <- ddply(tidy, .(subject, activity), function(x) colMeans(x[, 3:81]))
 
-by_subject <- split(tidy, tidy$subject) #split data by subject
-by_activity <- lapply(by_subject, function(x) split(x, x$activity)) #split by activity within each subject
-res <- matrix(rep(NA, 14580), 180, 81) #Create empty data frame (6 activities * 30 subjects = 180 rows. 81 variables = 81 columns)
-res <- as.data.frame(res)
-names(res) <- names(tidy)
-for (i in 1:30) {
-        res[(6 * i - 5):(6 * i), 1] <- names(by_subject[i]) #Assign subject
-        for (j in 1:6) {
-                res[6 * i + j - 6, 2] <- names(by_activity[[i]][j]) #Assign activity
-                data <- by_activity[[i]][[j]]
-                means <- colMeans(data[, 3:81]) #Calculate means for each activity
-                res[6 * i + j - 6, 3:81] <- means #Assign means
-        }
-}
-
+# Write table to a .txt file
 write.table(res, "Results.txt", row.name=FALSE)
